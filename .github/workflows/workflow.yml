@@ -1,0 +1,110 @@
+name: workflow # the name of the workflow.
+
+on: [workflow_dispatch] #This line specifies that the workflow can be manually triggered via a workflow dispatch event.
+
+permissions:   # the permissions for the workflow. It allows the workflow to write ID tokens and read contents.
+  id-token: write
+  contents: read
+
+jobs: # jobs within the workflow.
+  integration: # defines a job named "integration".
+    name: Continuous Integration  # name of the job to "Continuous Integration".
+    runs-on: ubuntu-latest  # job will run on a virtual machine running the latest version of Ubuntu.
+    steps:  # starts the list of steps that will be executed as part of the job.
+      - name: Checkout Code # checks out the source code for the repository using the GitHub Actions Checkout action.
+        uses: actions/checkout@v3
+
+      - name: Lint code # The first step is called Lint code. It is a linting step which checks the code for 
+        run: echo "Linting repository" # stylistic or formatting errors, and is performed by running the command echo "Linting repository".
+                                      # This step does not actually perform any linting, but instead just outputs a message to the console.
+      - name: Run unit tests ## The second step is called Run unit tests. This step runs unit tests for the codebase, 
+        run: echo "Running unit tests" #and is performed by running the command echo "Running unit tests". This step 
+                                    #does not actually run any tests, but instead just outputs a message to the console.
+
+  Continuous-Deployment: ## defines the job named "Continous-Deployment"
+    name: Continuous Deployment # name of the job is Continous Deployment
+    needs: integration # This specifies that the job depends on completion of the "integration" job.
+    runs-on: ubuntu-latest # job will run on a virtual machine running the latest version of Ubuntu.
+    steps: #  starts the list of steps that will be executed as part of the job.
+      - name: Setup Node  # name of job that sets up the Node.js environment on the ubuntu-latest machine.
+        uses: actions/setup-node@v3 # uses an action called actions/setup-node@v3, which is an official GitHub Action 
+        with:                       #that installs the specified version of Node.js and sets it up in the environment 
+          node-version: 16          # variables so that it can be used in the subsequent steps.
+#specified Node.js version is 16, which means that version 16 of Node.js will be installed and set up for use
+
+      - name: Check Node Version # It checks the version of npm installed in the Node.js environment on the ubuntu-latest machine.
+        run: npm -v # The step runs the command npm -v, which outputs the version of npm installed.
+
+      - name: Install Paperspace Cli # This step installs the Paperspace CLI globally.
+        run: npm install -g paperspace-node # The -g option in the npm install command specifies that the package 
+          #should be installed globally on the ubuntu-latest machine, so that it can be used in subsequent steps.
+
+      - name: Test Paperspace Cli # This step tests the Paperspace CLI version.
+        run: paperspace -version  # command to check the version of paperpace installed
+
+      - name: Start a Gpu Instance ## This step starts a GPU instance on Paperspace using the Paperspace CLI.
+        run: paperspace machines start --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }} # The
+# paperspace machines start command is used to start a machine on Paperspace. It takes two parameters
+# - --apiKey and --machineId. The --apiKey parameter is used to authenticate with the Paperspace API and is passed 
+#as a secret using ${{ secrets.API_KEY }}. The --machineId parameter is used to specify the ID of the machine that 
+#needs to be started, and is passed as a secret using ${{ secrets.MACHINE_ID }}.
+
+      - name: Wait For Instance state to be ready #job and waits for the Paperspace GPU instance to be ready before continuing to the next step.
+        run: paperspace machines waitfor --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }} --state "ready" # The paperspace 
+#machines waitfor command is used to wait for a machine on Paperspace to reach a certain state. In this case, the 
+#state being waited for is "ready", which means the machine is ready for use. The command takes three parameters
+#- --apiKey, --machineId, and --state. The --apiKey parameter is used to authenticate with the Paperspace API and 
+#is passed as a secret using ${{ secrets.API_KEY }}. The --machineId parameter is used to specify the ID of the 
+#machine that needs to be checked, and is passed as a secret using ${{ secrets.MACHINE_ID }}. The --state parameter
+# is used to specify the state that needs to be waited for.
+
+  Continuous-Training: #defines a job named "Continuous Training".
+    name: Continuous Training # name of the job is Continous Training
+    needs: Continuous-Deployment ## This job depends on the completion of the "Continuous Deployment" job.
+    runs-on: self-hosted ## This will run on a self-hosted runner which will be virtual machine ec2 of aws
+    steps: ## defines the steps that will run
+      - name: Checkout #This step checks out the repository's code so that it can be used in subsequent steps.
+        uses: actions/checkout@v3 
+
+      - name: Configure AWS credentials #This step is configuring the AWS credentials needed to access AWS services, such as an S3 bucket or an EC2 instance. 
+        uses: aws-actions/configure-aws-credentials@v1 # The aws-actions/configure-aws-credentials@v1 GitHub Action is used for this purpose.
+        with: #The with section specifies the credentials to use
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }} # which are stored in GitHub secrets.
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Run Training Pipeline # this step is configure the mongodb and aws logins to access their services
+        env: #This section defines environment variables that are used in the pipeline. These values are stored as 
+#secrets in GitHub and are referenced using ${{ secrets.SECRET_NAME }} syntax.
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        run: |
+          pip3 install -r requirements.txt
+          python3 src/pipeline/pipeline.py 
+
+      - name: Training Completed
+        run: echo "Training Completed"
+
+  Clean-Workbench:
+    name: Clean Workbench
+    needs: Continuous-Training
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Paperspace Cli
+        run: npm install -g paperspace-node
+
+      - name: Stop Running Instance
+        run: paperspace machines stop --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }}
+
+      - name: Wait For Instance state to be Stopped
+        run: paperspace machines waitfor --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }} --state "off"
+
+      - name: Job Completed
+        run: echo "Completed Training Stage"
