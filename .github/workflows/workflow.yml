@@ -75,36 +75,41 @@ jobs: # jobs within the workflow.
 
       - name: Run Training Pipeline # this step is configure the mongodb and aws logins to access their services
         env: #This section defines environment variables that are used in the pipeline. These values are stored as 
-#secrets in GitHub and are referenced using ${{ secrets.SECRET_NAME }} syntax.
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        run: |
-          pip3 install -r requirements.txt
+#secrets in GitHub and are referenced using ${{ secrets.SECRET_NAME }} syntax. 
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }} ## DATABASE_USERNAME of mongodb
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }} ## DATABASE_PASSWORD  of mongodb
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }} ## aws ACCESS_KEY_ID stored in github secrets
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }} ## aws AWS_SECRET_KEY stored in github secrets
+        run: |   #The command that will be executed in the pipeline. The | character indicates that the command will span multiple lines.             
+        
+          pip3 install -r requirements.txt 
+
           python3 src/pipeline/pipeline.py 
+#
+      - name: Training Completed #the last step of the pipeline, which is executed after the training pipeline completes.
+        run: echo "Training Completed" # It will print "Training Completed" in the Actions log to indicate that the pipeline has finished successfully.
 
-      - name: Training Completed
-        run: echo "Training Completed"
-
-  Clean-Workbench:
-    name: Clean Workbench
-    needs: Continuous-Training
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
+  Clean-Workbench: ##  workflow to clean up the resources after the continuous training stage has completed.
+    name: Clean Workbench # name of the workflow.
+    needs: Continuous-Training # name of the job.
+    runs-on: ubuntu-latest  # specifies that the job should run on the latest version of Ubuntu.
+    steps: # list of steps that will be executed in the job.
+      - name: Setup Node #  This step sets up Node.js 
+        uses: actions/setup-node@v3 # by using the actions/setup-node action 
         with:
-          node-version: 16
+          node-version: 16 ## specifies the Node.js version as 16.
 
-      - name: Install Paperspace Cli
-        run: npm install -g paperspace-node
+      - name: Install Paperspace Cli # This step installs the Paperspace CLI globally 
+        run: npm install -g paperspace-node ## The -g option in the npm install command specifies that the package 
+          #should be installed globally on the ubuntu-latest machine, so that it can be used in subsequent steps.
 
-      - name: Stop Running Instance
+      - name: Stop Running Instance # This step stops the running instance 
         run: paperspace machines stop --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }}
+        #by using the paperspace machines stop command and passing the API key and machine ID as secrets.
 
-      - name: Wait For Instance state to be Stopped
+      - name: Wait For Instance state to be Stopped #This step waits for the machine to be in the "off" state 
         run: paperspace machines waitfor --apiKey ${{ secrets.API_KEY }} --machineId ${{ secrets.MACHINE_ID }} --state "off"
+        # by using the paperspace machines wait for command and passing the API key and machine ID as secrets.
 
-      - name: Job Completed
-        run: echo "Completed Training Stage"
+      - name: Job Completed # This step prints a message to indicate that the job has completed.
+        run: echo "Completed Training Stage" # it will eco or output a message Completed Training Stage
