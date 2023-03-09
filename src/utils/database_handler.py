@@ -1,6 +1,7 @@
 from src.entity.config_entity import DatabaseConfig
 from pymongo import MongoClient
 from typing import List, Dict, Any
+from dotenv import load_dotenv
 
 
 class MongoDBClient(object):

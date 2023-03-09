@@ -7,6 +7,7 @@ scikit-learn
 pymongo==4.2.0
 annoy==1.17.1
 dnspython
+python-dotenv==0.21.0 
 #--extra-index-url https://download.pytorch.org/whl/cu113
 #torch
 #torchvision
