@@ -33,7 +33,7 @@ class DataIngestionConfig: ## class name is DataIngestionConfig
       that the random number generator produces the same sequence of numbers each time the program is run. This can
     be useful in situations where you want to replicate the results of a random process, such as when training a machine
       learning model. By setting the seed to a specific value, you can ensure that the random numbers used during training are the same each time, which can help you reproduce your results"""
-        self.RATIO: tuple = (0.8, 0.1, 0.1)  # to the RATIO attribute of the instance.
+        self.RATIO: tuple = (0.8, 0.1, 0.1)  # the ration in which the train,test and validation folders will be split
 
     def get_data_ingestion_config(self):
         return self.__dict__ #  method of the class that returns a dictionary of the instance's attributes.
@@ -78,7 +78,7 @@ class ImageFolderConfig:
         self.ROOT_DIR = os.path.join(from_root(), "data", "raw", "images")
         self.IMAGE_SIZE = 256
         self.LABEL_MAP = {}
-        self.BUCKET: str = "image-database-system-01"
+        self.BUCKET: str = "search-image619"
         self.S3_LINK = "https://{0}.s3.ap-south-1.amazonaws.com/images/{1}/{2}"
         
 
@@ -118,3 +118,9 @@ class s3Config: ## name of class is s3Config
 
     def get_s3_config(self): #method of the class that returns a dictionary of the instance's attributes.
         return self.__dict__
+    
+
+
+
+
+    
