@@ -89,3 +89,9 @@ if __name__ == "__main__":
 
     dc = DataIngestion() ## Instance of DataIngestion class
     print(dc.run_step()) ## calling the run_step method to run the download_dir and split_data methods
+
+
+
+
+
+
