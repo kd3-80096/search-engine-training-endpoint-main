@@ -50,6 +50,7 @@ if __name__ == "__main__":
 
     mongo = MongoDBClient()
     print(mongo.insert_bulk_record(data))
+    
     # print(mongo.drop_collection())
     # result = mongo.get_collection_documents()
     # print(result["Info"])

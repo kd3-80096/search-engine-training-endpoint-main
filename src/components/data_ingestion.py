@@ -1,16 +1,15 @@
-## The code imports necessary libraries and modules - DataIngestionConfig and S3Connector from 
-## the src.entity and src.utils packages, respectively, and the from_root() function from the from_root 
-## module. It also imports the splitfolders module for splitting the data and the built-in os module for 
-##handling file and directory operations.
 
-from src.entity.config_entity import DataIngestionConfig
+
+
+from src.entity.config_entity import DataIngestionConfig## The code imports necessary libraries and modules - DataIngestionConfig and S3Connector from 
 from src.utils.storage_handler import S3Connector
-from from_root import from_root
-import splitfolders
-import os
+from from_root import from_root## the src.entity and src.utils packages, respectively, and the from_root() function from the from_root 
+import splitfolders ## module. It also imports the splitfolders module for splitting the data and the built-in os module for 
+import os ##handling file and directory operations.
 
 
-class DataIngestion:
+class DataIngestion: ## class DataIngestion
+
     def __init__(self):
         self.config = DataIngestionConfig()
 

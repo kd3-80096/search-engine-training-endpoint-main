@@ -25,8 +25,14 @@ class DataIngestionConfig: ## class name is DataIngestionConfig
         self.PREFIX: str = "images/"  #assigns the string "images/" to the PREFIX attribute of the instance.
         self.RAW: str = "data/raw" # assigns the string "data/raw" to the RAW attribute of the instance.
         self.SPLIT: str = "data/splitted" # assigns the string "data/splitted" to the SPLIT attribute of the instance.
-        self.BUCKET: str = "image-database-system-01" # assigns the string "search-image619" to the BUCKET attribute of the instance
-        self.SEED: int = 1337  #assigns the integer 1337 to the SEED attribute of the instance.
+        self.BUCKET: str = "search-image619" # assigns the string "search-image619" to the BUCKET attribute of the instance
+        self.SEED: int = 1337  
+        """The term "seed" in this context typically refers to a random number generator seed. A random number generator
+      uses a seed value to generate a sequence of seemingly random numbers. If two generators are seeded with the same 
+      value, they will produce the same sequence of numbers.The purpose of setting a specific seed value is to ensure 
+      that the random number generator produces the same sequence of numbers each time the program is run. This can
+    be useful in situations where you want to replicate the results of a random process, such as when training a machine
+      learning model. By setting the seed to a specific value, you can ensure that the random numbers used during training are the same each time, which can help you reproduce your results"""
         self.RATIO: tuple = (0.8, 0.1, 0.1)  # to the RATIO attribute of the instance.
 
     def get_data_ingestion_config(self):
@@ -96,17 +102,19 @@ class AnnoyConfig:
         return self.__dict__
 
 
-class s3Config:
-    def __init__(self):
-        self.ACCESS_KEY_ID = os.environ["ACCESS_KEY_ID"]
-        self.SECRET_KEY = os.environ["AWS_SECRET_KEY"]
-        self.REGION_NAME = "ap-south-1"
-        self.BUCKET_NAME = "image-database-system-01"
-        self.KEY = "model"
-        self.ZIP_NAME = "artifacts.tar.gz"
-        self.ZIP_PATHS = [(os.path.join(from_root(), "data", "embeddings", "embeddings.json"), "embeddings.json"),
-                          (os.path.join(from_root(), "data", "embeddings", "embeddings.ann"), "embeddings.ann"),
-                          (os.path.join(from_root(), "model", "finetuned", "model.pth"), "model.pth")]
+class s3Config: ## name of class is s3Config
 
-    def get_s3_config(self):
+    def __init__(self): ## constructor method of the class, which is called when an instance of the class is created.
+        self.ACCESS_KEY_ID = os.environ["ACCESS_KEY_ID"] # os.environ["ACCESS_KEY_ID"] assigns the value of the 
+        #environment variable ACCESS_KEY_ID to the ACCESS_KEY_ID attribute of the instance.
+        self.SECRET_KEY = os.environ["AWS_SECRET_KEY"] # 
+        self.REGION_NAME = "ap-south-1" # assigns the string "ap-south-1" to the REGION_NAME attribute of the instance.
+        self.BUCKET_NAME = "search-image619" # name of the aws s3 bucket where the images are stored
+        self.KEY = "model" #  assigns the string "model" to the KEY attribute of the instance.
+        self.ZIP_NAME = "artifacts.tar.gz" #  assigns the string "artifacts.tar.gz" to the ZIP_NAME attribute of the instance.
+        self.ZIP_PATHS = [(os.path.join(from_root(), "data", "embeddings", "embeddings.json"), "embeddings.json"), # The first tuple contains the path to the embeddings.json file and the string "embeddings.json".
+                          (os.path.join(from_root(), "data", "embeddings", "embeddings.ann"), "embeddings.ann"), # The second tuple contains the path to the embeddings.ann file and the string "embeddings.ann".
+                          (os.path.join(from_root(), "model", "finetuned", "model.pth"), "model.pth")] # The third tuple contains the path to the model.pth file and the string "model.pth".
+
+    def get_s3_config(self): #method of the class that returns a dictionary of the instance's attributes.
         return self.__dict__
