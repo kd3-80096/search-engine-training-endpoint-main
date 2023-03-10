@@ -8,10 +8,10 @@ class DatabaseConfig: ## class name is DatabaseConfig
     def __init__(self): #__init__(self) is the constructor method of the class, which is called when an instance of the class is created.
         # Load environment variables from .env file
         load_dotenv() # method that loads  environment variables from a .env file.
-        self.USERNAME: str = os.environ["DATABASE_USERNAME"] #os.environ["DATABASE_USERNAME"] assigns the value of 
+        self.USERNAME: str = os.getenv["ATLAS_CLUSTER_USERNAME"] #os.environ["DATABASE_USERNAME"] assigns the value of 
         #the environment variable DATABASE_USERNAME to the USERNAME attribute of the instance.
-        self.PASSWORD: str = os.environ["DATABASE_PASSWORD"]
-        self.URL: str = os.getenv("MONGODB_URL_KEY") #os.getenv("MONGODB_URL_KEY") assigns the value of the 
+        self.PASSWORD: str = os.getenv["DATABASE_PASSWORD"]
+        self.URL: str = os.getenv("ATLAS_CLUSTER_PASSWORD") #os.getenv("MONGODB_URL_KEY") assigns the value of the 
         # environment variable MONGODB_URL_KEY to the URL attribute of the instance.
         self.DBNAME: str = "ReverseImageSearchEngine" # assigns the string "ReverseImageSearchEngine" to the DBNAME attribute of the instance.
         self.COLLECTION: str = "Embeddings" #  assigns the string "Embeddings" to the COLLECTION attribute of the instance.
@@ -39,16 +39,16 @@ class DataIngestionConfig: ## class name is DataIngestionConfig
         return self.__dict__ #  method of the class that returns a dictionary of the instance's attributes.
 
 
-class DataPreprocessingConfig:
-    def __init__(self):
-        self.BATCH_SIZE = 32
-        self.IMAGE_SIZE = 256
-        self.TRAIN_DATA_PATH = os.path.join(from_root(), "data", "splitted", "train")
-        self.TEST_DATA_PATH = os.path.join(from_root(), "data", "splitted", "test")
-        self.VALID_DATA_PATH = os.path.join(from_root(), "data", "splitted", "valid")
+class DataPreprocessingConfig: ## class name is DataPreprocessingConfig
+    def __init__(self):#__init__(self) is the constructor method of the class, which is called when an instance of the class is created.
+        self.BATCH_SIZE = 32 ## 32 images will be passed in one batch size
+        self.IMAGE_SIZE = 256 ## image size is 256
+        self.TRAIN_DATA_PATH = os.path.join(from_root(), "data", "splitted", "train") ##TRAIN_DATA_PATH is stored in self.TRAIN_DATA_PATH 
+        self.TEST_DATA_PATH = os.path.join(from_root(), "data", "splitted", "test") # TEST_DATA_PATH is stored in self.TEST_DATA_PATH
+        self.VALID_DATA_PATH = os.path.join(from_root(), "data", "splitted", "valid") #VALID_DATA_PATH is stored in self.VALID_DATA_PATH
 
     def get_data_preprocessing_config(self):
-        return self.__dict__
+        return self.__dict__ #  method of the class that returns a dictionary of the instance's attributes.
 
 
 class ModelConfig:
@@ -105,9 +105,9 @@ class AnnoyConfig:
 class s3Config: ## name of class is s3Config
 
     def __init__(self): ## constructor method of the class, which is called when an instance of the class is created.
-        self.ACCESS_KEY_ID = os.environ["ACCESS_KEY_ID"] # os.environ["ACCESS_KEY_ID"] assigns the value of the 
+        self.ACCESS_KEY_ID = os.getenv["ACCESS_KEY_ID"] # os.environ["ACCESS_KEY_ID"] assigns the value of the 
         #environment variable ACCESS_KEY_ID to the ACCESS_KEY_ID attribute of the instance.
-        self.SECRET_KEY = os.environ["AWS_SECRET_KEY"] # 
+        self.SECRET_KEY = os.getenv["AWS_SECRET_KEY"] # 
         self.REGION_NAME = "ap-south-1" # assigns the string "ap-south-1" to the REGION_NAME attribute of the instance.
         self.BUCKET_NAME = "search-image619" # name of the aws s3 bucket where the images are stored
         self.KEY = "model" #  assigns the string "model" to the KEY attribute of the instance.

@@ -1,13 +1,20 @@
-from src.entity.config_entity import DataPreprocessingConfig
-from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from tqdm import tqdm
+from src.entity.config_entity import DataPreprocessingConfig ## importing the DataPreprocessingConfig class 
+from torchvision.datasets import ImageFolder  ##from torchvision.datasets import ImageFolder is a Python import 
+#statement that imports the ImageFolder class from the torchvision.datasets module.The ImageFolder class is a
+#  dataset class that can be used to load a set of images from a directory structure where each subdirectory 
+# represents a different class. This is a common format for image classification datasets, where each image 
+# is assigned a label that corresponds to its class.
+from torch.utils.data import DataLoader# : a PyTorch utility for loading and batching data from a dataset,which
+#makes it easier to iterate over the  data during training.
+from torchvision import transforms## The transforms module provides a set of common image transformations that 
+#can be used for data augmentation and preprocessing in computer vision tasks. These transformations can be applied
+# to input images to make the training process more robust and improve the performance of machine learning models.
+from tqdm import tqdm ## to show the progressbar
 
 
-class DataPreprocessing:
-    def __init__(self):
-        self.config = DataPreprocessingConfig()
+class DataPreprocessing: ## contains the methods that have image preprocessing steps in them
+    def __init__(self): # __init__(self) is the constructor method of the class, which is called when an instance of the class is created.
+        self.config = DataPreprocessingConfig() # DataPreprocessingConfig class is stored in self.config instance
 
     def transformations(self):
         try:

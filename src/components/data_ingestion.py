@@ -1,6 +1,3 @@
-
-
-
 from src.entity.config_entity import DataIngestionConfig## The code imports necessary libraries and modules - DataIngestionConfig and S3Connector from 
 from src.utils.storage_handler import S3Connector
 from from_root import from_root## the src.entity and src.utils packages, respectively, and the from_root() function from the from_root 
