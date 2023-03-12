@@ -8,9 +8,9 @@ class DatabaseConfig: ## class name is DatabaseConfig
     def __init__(self): #__init__(self) is the constructor method of the class, which is called when an instance of the class is created.
         # Load environment variables from .env file
         load_dotenv() # method that loads  environment variables from a .env file.
-        self.USERNAME: str = os.getenv["ATLAS_CLUSTER_USERNAME"] #os.environ["DATABASE_USERNAME"] assigns the value of 
+        self.USERNAME: str = os.getenv("ATLAS_CLUSTER_USERNAME") #os.environ["DATABASE_USERNAME"] assigns the value of 
         #the environment variable DATABASE_USERNAME to the USERNAME attribute of the instance.
-        self.PASSWORD: str = os.getenv["DATABASE_PASSWORD"]
+        self.PASSWORD: str = os.getenv("DATABASE_PASSWORD")
         self.URL: str = os.getenv("ATLAS_CLUSTER_PASSWORD") #os.getenv("MONGODB_URL_KEY") assigns the value of the 
         # environment variable MONGODB_URL_KEY to the URL attribute of the instance.
         self.DBNAME: str = "ReverseImageSearchEngine" # assigns the string "ReverseImageSearchEngine" to the DBNAME attribute of the instance.

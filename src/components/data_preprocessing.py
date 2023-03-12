@@ -16,25 +16,30 @@ class DataPreprocessing: ## contains the methods that have image preprocessing s
     def __init__(self): # __init__(self) is the constructor method of the class, which is called when an instance of the class is created.
         self.config = DataPreprocessingConfig() # DataPreprocessingConfig class is stored in self.config instance
 
-    def transformations(self):
+    def transformations(self): ## This method  the transforms module provides a set of common image transformations 
         try:
             """
             Transformation Method Provides TRANSFORM_IMG object. Its pytorch's transformation class to apply on images.
             :return: TRANSFORM_IMG
             """
-            TRANSFORM_IMG = transforms.Compose(
-                [transforms.Resize(self.config.IMAGE_SIZE),
-                 transforms.CenterCrop(256),
-                 transforms.ToTensor(),
-                 transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                      std=[0.229, 0.224, 0.225])]
+            TRANSFORM_IMG = transforms.Compose( ## Composes several transforms together.
+                [transforms.Resize(self.config.IMAGE_SIZE),## resize the image to shape to 256
+                 transforms.CenterCrop(256), ## This transformation takes a PIL (Python Imaging Library) image as input and 
+#returns a new image of size (256, 256) by cropping the input image from its center. The transformation ensures that the center of the image is preserved while removing the outer edges of the image.
+                 transforms.ToTensor(), ##Convert a PIL Image or numpy.ndarray to tensor. This transform does not support torchscript.
+#Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                 transforms.Normalize(mean=[0.485, 0.456, 0.406], #data preprocessing technique used in deep learning models for computer vision tasks.
+#This transformation is typically applied to the image data after it has been resized or cropped, and before it is fed into the neural network.
+#The mean and std arguments are lists of length 3, corresponding to the mean and standard deviation of the pixel values for the red, green, and blue 
+# channels, respectively. These values are usually calculated based on the training dataset and are used to normalize the pixel values of the input images so that they have a similar scale and range.
+                                      std=[0.229, 0.224, 0.225])] #This operation scales the pixel values to a range of approximately -1 to 1, which is generally suitable for training deep neural networks.
             )
 
-            return TRANSFORM_IMG
+            return TRANSFORM_IMG ## return the transformed image parameters to be used in the create_loaders method input
         except Exception as e:
             raise e
 
-    def create_loaders(self, TRANSFORM_IMG):
+    def create_loaders(self, TRANSFORM_IMG): ## this method will take the transformed images from the transformations method as input.
         """
         The create_loaders method takes Transformations and create dataloaders.
         :param TRANSFORM_IMG:
@@ -42,20 +47,27 @@ class DataPreprocessing: ## contains the methods that have image preprocessing s
         """
         try:
             print("Generating DataLoaders : ")
-            result = {}
-            for _ in tqdm(range(1)):
-                train_data = ImageFolder(root=self.config.TRAIN_DATA_PATH, transform=TRANSFORM_IMG)
+            result = {} #The function starts by creating an empty dictionary named result to store the resulting dataloaders.
+            for _ in tqdm(range(1)): # In this case, the loop for _ in tqdm(range(1)): is simply a way to create a progress bar that will 
+#iterate for one iteration only. The use of the range function with an argument of 1 is just a convenient way to create a loop that will run only once.
+#The underscore _ is used as a variable name to indicate that we don't actually need to use the loop variable, and it is just there to ensure that the loop runs once.
+                train_data = ImageFolder(root=self.config.TRAIN_DATA_PATH, transform=TRANSFORM_IMG) # uses the ImageFolder class from PyTorch to 
+#create three datasets: train_data, test_data, and valid_data. Each dataset is initialized with a root directory 
+# where the images are stored and the specified transformation TRANSFORM_IMG.
                 test_data = ImageFolder(root=self.config.TEST_DATA_PATH, transform=TRANSFORM_IMG)
                 valid_data = ImageFolder(root=self.config.TEST_DATA_PATH, transform=TRANSFORM_IMG)
 
                 train_data_loader = DataLoader(train_data, batch_size=self.config.BATCH_SIZE,
-                                               shuffle=True, num_workers=1)
+                                               shuffle=True, num_workers=1)#method uses the DataLoader class to create dataloaders for each dataset.
                 test_data_loader = DataLoader(test_data, batch_size=self.config.BATCH_SIZE,
-                                              shuffle=False, num_workers=1)
-                valid_data_loader = DataLoader(valid_data, batch_size=self.config.BATCH_SIZE,
-                                               shuffle=False, num_workers=1)
+                                              shuffle=False, num_workers=1) #Each dataloader is specified with a batch size (self.config.BATCH_SIZE), 
+                valid_data_loader = DataLoader(valid_data, batch_size=self.config.BATCH_SIZE, #shuffle parameter to shuffle the data
+                                               shuffle=False, num_workers=1) # and the number of worker processes used for loading the data (num_workers=1).
 
                 result = {
+                    """Finally, the method returns a dictionary result containing the three dataloaders for the 
+                    training, testing, and validation datasets, along with their corresponding datasets."""
+
                     "train_data_loader": (train_data_loader, train_data),
                     "test_data_loader": (test_data_loader, test_data),
                     "valid_data_loader": (valid_data_loader, valid_data)
@@ -80,7 +92,13 @@ class DataPreprocessing: ## contains the methods that have image preprocessing s
 if __name__ == "__main__":
     # Data Ingestion Can be replaced like this
     # https://aws.amazon.com/blogs/machine-learning/announcing-the-amazon-s3-plugin-for-pytorch/
-    dp = DataPreprocessing()
+    dp = DataPreprocessing() ## creating the instance of the class DataPreprocessing
     loaders = dp.run_step()
-    for i in loaders["train_data_loader"][0]:
+    for i in loaders["train_data_loader"][0]:#for loop iterates over the batches in the training dataloader by 
+    #calling loaders["train_data_loader"][0] and breaking after the first batch using the break statement.
         break
+
+
+
+
+
