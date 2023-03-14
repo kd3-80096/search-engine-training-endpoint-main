@@ -44,12 +44,12 @@ class Pipeline: ## defining the class as Pipeline which will have methods run va
     @staticmethod
     def initiate_data_preprocessing(): 
         dp = DataPreprocessing() #This method creates an instance of the DataPreprocessing class using dp = DataPreprocessing().
-        loaders = dp.run_step() #
+        loaders = dp.run_step() #calling the run_step method to run transformations and create_loaders methods
         return loaders
 
     @staticmethod
     def initiate_model_architecture():
-        return NeuralNet()
+        return NeuralNet() ## Returns an instance of the NeuralNet class, which defines the architecture of the neural network.
 
     def initiate_model_training(self, loaders, net):
         trainer = Trainer(loaders, self.device, net)

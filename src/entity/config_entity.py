@@ -63,14 +63,15 @@ class ModelConfig: ## class name is ModelConfig which defines the inputs to the 
         return self.__dict__ ## returning the attributes and its values in dictionary format.
 
 
-class TrainerConfig:
-    def __init__(self):
-        self.MODEL_STORE_PATH = os.path.join(from_root(), "model", "finetuned", "model.pth")
-        self.EPOCHS = 2
-        self.Evaluation = True
+class TrainerConfig: ## TrainerConfig class, which has three attributes initialized in the constructor: MODEL_STORE_PATH, EPOCHS, and Evaluation.
+    def __init__(self): 
+        self.MODEL_STORE_PATH = os.path.join(from_root(), "model", "finetuned", "model.pth") ##  used to join the 
+#root directory of the project (returned by the from_root() function) with the directory "model/finetuned" and the file "model.pth". 
+        self.EPOCHS = 2 ## 2 number of epochs the model will be trained for during the fine-tuning process.
+        self.Evaluation = True ##True boolean attribute that specifies whether the model should be evaluated on a validation set after each epoch of training.
 
     def get_trainer_config(self):
-        return self.__dict__
+        return self.__dict__ ## returning the attributes and its values in dictionary format.
 
 
 class ImageFolderConfig:

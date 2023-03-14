@@ -18,7 +18,7 @@ class NeuralNet(nn.Module): ## defines a class called NeuralNet which inherits f
         self.flatten = nn.Flatten() ## # a flattening layer, which flattens the output of the convolutional layers into a 1D vector that can be processed by a fully connected layer.
         self.final = nn.Linear(4 * 8 * 8, self.config.LABEL) ## Defines a fully connected layer using the nn.Linear() 
 #class from PyTorch. The input to this layer is a tensor with dimensions (4, 8, 8) which corresponds to the output 
-# dimensions of the final convolutional layer. The output dimension of this layer is equal to the LABEL attribute 
+# dimensions of the final convolutional layer. The output dimension of this layer is equal to the 101 LABEL attribute 
 # of the self.config object.
 
     def get_model(self):
