@@ -51,16 +51,16 @@ class DataPreprocessingConfig: ## class name is DataPreprocessingConfig
         return self.__dict__ #  method of the class that returns a dictionary of the instance's attributes.
 
 
-class ModelConfig:
+class ModelConfig: ## class name is ModelConfig which defines the inputs to the model creation
     def __init__(self):
-        self.LABEL = 101
-        self.STORE_PATH = os.path.join(from_root(), "model", "benchmark")
-        self.REPOSITORY = 'pytorch/vision:v0.10.0'
-        self.BASEMODEL = 'resnet18'
-        self.PRETRAINED = True
+        self.LABEL = 101 ## total number of labels of images is 101
+        self.STORE_PATH = os.path.join(from_root(), "model", "benchmark") ## path where the model will be stored is 
+        self.REPOSITORY = 'pytorch/vision:v0.10.0' ##set the REPOSITORY variable to the PyTorch vision library version v0.10.0.
+        self.BASEMODEL = 'resnet18'  ## algorithm used is resnet-18
+        self.PRETRAINED = True ## pretraining is set to true
 
     def get_model_config(self):
-        return self.__dict__
+        return self.__dict__ ## returning the attributes and its values in dictionary format.
 
 
 class TrainerConfig:

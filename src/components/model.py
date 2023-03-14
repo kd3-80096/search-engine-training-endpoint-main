@@ -1,6 +1,7 @@
-from src.entity.config_entity import ModelConfig
-from torch import nn
-import torch
+from src.entity.config_entity import ModelConfig ## importing the class named ModelConfig
+from torch import nn ## importing the neural network module which provides a wide range of building blocks for constructing 
+# deep neural networks, such as layers and activation functions.
+import torch ## importing torch The torch package contains data structures for multi-dimensional tensors
 
 
 class NeuralNet(nn.Module):

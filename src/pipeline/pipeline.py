@@ -42,9 +42,9 @@ class Pipeline: ## defining the class as Pipeline which will have methods run va
         dc.run_step() ## calling the run_step method to run the download_dir and split_data methods
 
     @staticmethod
-    def initiate_data_preprocessing():
-        dp = DataPreprocessing()
-        loaders = dp.run_step()
+    def initiate_data_preprocessing(): 
+        dp = DataPreprocessing() #This method creates an instance of the DataPreprocessing class using dp = DataPreprocessing().
+        loaders = dp.run_step() #
         return loaders
 
     @staticmethod
