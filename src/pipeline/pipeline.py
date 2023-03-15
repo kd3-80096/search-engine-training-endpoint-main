@@ -51,11 +51,11 @@ class Pipeline: ## defining the class as Pipeline which will have methods run va
     def initiate_model_architecture():
         return NeuralNet() ## Returns an instance of the NeuralNet class, which defines the architecture of the neural network.
 
-    def initiate_model_training(self, loaders, net):
-        trainer = Trainer(loaders, self.device, net)
-        trainer.train_model()
-        trainer.evaluate(validate=True)
-        trainer.save_model_in_pth()
+    def initiate_model_training(self, loaders, net): ## method initiating the parameters to train the model
+        trainer = Trainer(loaders, self.device, net) ## creating an instance of Trainer class and passing the inputs as loaders,device and net to them
+        trainer.train_model() ## calling the train_model method in Trainer class 
+        trainer.evaluate(validate=True) ## calling the evaluate method to test model performance
+        trainer.save_model_in_pth() ## calling the save_model_in_pth method to save the model in the given path.
 
     def generate_embeddings(self, loaders, net):
         data = ImageFolder(label_map=loaders["valid_data_loader"][1].class_to_idx)
