@@ -65,6 +65,14 @@ class Trainer: ##The constructor initializes several instance variables based on
         on our validation set.
         """
         self.model.eval() #set the model to evaluation mode.
+        """model.eval() sets the model to evaluation mode, which disables dropout and batch normalization layers.
+        During training, dropout and batch normalization layers are used to regularize the model and improve its
+        generalization ability by preventing overfitting. However, during inference or evaluation, we want the model
+        to produce deterministic outputs, so we turn off dropout and batch normalization. This is achieved by calling 
+        model.eval() before making predictions.In addition to disabling dropout and batch normalization, calling 
+        model.eval() also sets the requires_grad attribute of all model parameters to False, which disables gradient
+        computation. This makes the model more memory-efficient, since we don't need to keep track of gradients during 
+        evaluation."""
         val_accuracy = [] # initialize empty lists for storing the validation accuracy.
         val_loss = [] ## initialize empty lists for storing the val_loss.
 

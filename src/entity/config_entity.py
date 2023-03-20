@@ -74,17 +74,19 @@ class TrainerConfig: ## TrainerConfig class, which has three attributes initiali
         return self.__dict__ ## returning the attributes and its values in dictionary format.
 
 
-class ImageFolderConfig:
-    def __init__(self):
-        self.ROOT_DIR = os.path.join(from_root(), "data", "raw", "images")
-        self.IMAGE_SIZE = 256
-        self.LABEL_MAP = {}
-        self.BUCKET: str = "search-image619"
-        self.S3_LINK = "https://{0}.s3.ap-south-1.amazonaws.com/images/{1}/{2}"
+class ImageFolderConfig: ## class name is ImageFolderConfig
+    """ class is used to define a set of configurations related to the image folder data, such as the directory path,
+   image size, label map, S3 bucket name, and S3 link format."""   
+    def __init__(self): ##__init__(self) is the constructor method of the class, which is called when an instance of the class is created.
+        self.ROOT_DIR = os.path.join(from_root(), "data", "raw", "images") # The path where the raw images will be stored
+        self.IMAGE_SIZE = 256 ## size of image will be 256
+        self.LABEL_MAP = {} ##dictionary that maps class names to class indices.
+        self.BUCKET: str = "search-image619" ##  string representing the name of the S3 bucket where the images are stored.
+        self.S3_LINK = "https://{0}.s3.ap-south-1.amazonaws.com/images/{1}/{2}" ## string representing the format of the link to an image in the S3 bucket.
         
 
     def get_image_folder_config(self):
-        return self.__dict__
+        return self.__dict__ #method returns a dictionary containing all the attributes of the ImageFolderConfig instance
 
 
 class EmbeddingsConfig:

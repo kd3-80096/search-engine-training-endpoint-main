@@ -1,27 +1,32 @@
-from src.components.data_preprocessing import DataPreprocessing
-from src.entity.config_entity import ImageFolderConfig, EmbeddingsConfig
-from src.utils.database_handler import MongoDBClient
-from torch.utils.data import Dataset, DataLoader
-from src.components.model import NeuralNet
-from typing import List, Dict
-from torchvision import transforms
-from collections import namedtuple
-from PIL import Image
-from torch import nn
-import pandas as pd
-from tqdm import tqdm
-import numpy as np
-import json
-import torch
-import os
-from pathlib import Path
+from src.components.data_preprocessing import DataPreprocessing ##importing the DataPreprocessing class 
+from src.entity.config_entity import ImageFolderConfig, EmbeddingsConfig #importing the ImageFolderConfig, EmbeddingsConfig class 
+from src.utils.database_handler import MongoDBClient ## importing the MongoDBClient class 
+from torch.utils.data import Dataset, DataLoader ## importing An abstract class representing a :class:`Dataset`.
+## also importing Data loader. Combines a dataset and a sampler, and provides an iterable over the given dataset.
+from src.components.model import NeuralNet ## importing the class NeuralNet
+from typing import List, Dict ## list and dictionary importing from typing library
+from torchvision import transforms #provides various image transformations such as resizing, cropping, normalization, and data augmentation.
+from collections import namedtuple # is a factory function for creating tuple subclasses with named fields.
+from PIL import Image # provides functions to open, manipulate, and save image files.
+import torch #  is the main PyTorch package used for building and training deep learning models.
+from torch import nn #provides various neural network layers and modules.
+import pandas as pd # importing the pandas as pd
+from tqdm import tqdm # to see the progess of the process we import the tqdm
+import numpy as np ## importing numpy as np
+import json ## The json module is a built-in Python module that provides methods for encoding and decoding JSON (JavaScript Object Notation) data. 
+import os ## for the os operations
+from pathlib import Path #Pathlib is a Python module that provides an object-oriented interface to work with file system paths
 
 ImageRecord = namedtuple("ImageRecord", ["img", "label", "s3_link"])
 
 
 class ImageFolder(Dataset):
-    def __init__(self, label_map: Dict):
-        self.config = ImageFolderConfig()
+    """This class is a PyTorch Dataset that reads image files from a directory and preprocesses them into tensors using
+the transforms module from the torchvision library. The class reads the images, labels, and S3 links from the file
+system, stores them in a list of ImageRecord named tuples, and provides the __len__ and __getitem__ methods to
+     access the data."""
+    def __init__(self, label_map: Dict): #Defines a constructor method for the ImageFolder class that takes in a dictionary label_map as input.
+        self.config = ImageFolderConfig() # Initializes an instance of the ImageFolderConfig class and assigns it to the config attribute of the ImageFolder class. 
         self.config.LABEL_MAP = label_map
         self.transform = self.transformations()
         self.image_records: List[ImageRecord] = []
@@ -68,6 +73,9 @@ class ImageFolder(Dataset):
 
 
 class EmbeddingGenerator:
+    """ This class loads a pre-trained neural network model from a saved file, removes the last layer, and applies
+    the model to the images in the ImageFolder dataset to generate embeddings. The embeddings are then saved to a 
+    MongoDB database along with their labels and S3 links."""
     def __init__(self, model, device):
         self.config = EmbeddingsConfig()
         self.mongo = MongoDBClient()
