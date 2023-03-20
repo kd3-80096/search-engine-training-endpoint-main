@@ -17,7 +17,11 @@ import json ## The json module is a built-in Python module that provides methods
 import os ## for the os operations
 from pathlib import Path #Pathlib is a Python module that provides an object-oriented interface to work with file system paths
 
-ImageRecord = namedtuple("ImageRecord", ["img", "label", "s3_link"])
+ImageRecord = namedtuple("ImageRecord", ["img", "label", "s3_link"]) ##code creates a new named tuple called ImageRecord
+#with three fields: img, label, and s3_link. The first argument is the name of the new namedtuple and the second 
+# argument is a list of field names for the new namedtuple. The fields are used to store information about each 
+# image, including the image data itself (img), the corresponding label (label), and a link to the S3 storage 
+# location for the image (s3_link).
 
 
 class ImageFolder(Dataset):
@@ -27,22 +31,25 @@ system, stores them in a list of ImageRecord named tuples, and provides the __le
      access the data."""
     def __init__(self, label_map: Dict): #Defines a constructor method for the ImageFolder class that takes in a dictionary label_map as input.
         self.config = ImageFolderConfig() # Initializes an instance of the ImageFolderConfig class and assigns it to the config attribute of the ImageFolder class. 
-        self.config.LABEL_MAP = label_map
-        self.transform = self.transformations()
-        self.image_records: List[ImageRecord] = []
-        self.record = ImageRecord
+        self.config.LABEL_MAP = label_map #Assigns the input label_map dictionary to the LABEL_MAP attribute of the config object.
+        self.transform = self.transformations() # Calls the transformations() method and assigns the returned transformation pipeline to the transform attribute of the ImageFolder class.
+        self.image_records: List[ImageRecord] = [] # Initializes an empty list image_records with the data type of List[ImageRecord].
+        self.record = ImageRecord # assigns the tupleImageRecord to the record attribute of the self.
 
-        file_list = os.listdir(self.config.ROOT_DIR)
+        file_list = os.listdir(self.config.ROOT_DIR) # Retrieves a list of all the files and directories present in
+        #the ROOT_DIR attribute of the config object
 
-        for class_path in file_list:
-            path = os.path.join(self.config.ROOT_DIR, f"{class_path}")
-            images = os.listdir(path)
-            for image in tqdm(images):
-                image_path = Path(f"""{self.config.ROOT_DIR}/{class_path}/{image}""")
-                self.image_records.append(self.record(img=image_path,
-                                                      label=self.config.LABEL_MAP[class_path],
-                                                      s3_link=self.config.S3_LINK.format(self.config.BUCKET, class_path,
-                                                                                         image)))
+        for class_path in file_list: ## looping to the retrived files from file_list
+            path = os.path.join(self.config.ROOT_DIR, f"{class_path}") # Joins the ROOT_DIR and the current directory 
+            #path to get the absolute path of the current directory.
+            images = os.listdir(path) # Retrieves a list of all the image filenames present in the current directory.
+            for image in tqdm(images):#  Loops through each image filename in the current directory.
+                image_path = Path(f"""{self.config.ROOT_DIR}/{class_path}/{image}""") #Constructs the absolute path of the current image.
+                self.image_records.append(self.record(img=image_path, #Creates an ImageRecord object with the img, label, and s3_link attributes, 
+                label=self.config.LABEL_MAP[class_path],#where img is the current image absolute path, label is the class label assigned to the current image directory
+                s3_link=self.config.S3_LINK.format(self.config.BUCKET, class_path,#and s3_link is the URL of the image file in an S3 bucket.
+                image))) #The ImageRecord object is then appended to the image_records list.
+
 
     def transformations(self):
         TRANSFORM_IMG = transforms.Compose(
