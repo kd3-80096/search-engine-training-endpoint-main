@@ -84,43 +84,50 @@ class EmbeddingGenerator:
     the model to the images in the ImageFolder dataset to generate embeddings. The embeddings are then saved to a 
     MongoDB database along with their labels and S3 links."""
     def __init__(self, model, device): #initialization method that takes two arguments, model and device.
-        self.config = EmbeddingsConfig() # 
-        self.mongo = MongoDBClient() # 
-        self.model = model 
-        self.device = device 
-        self.embedding_model = self.load_model()
-        self.embedding_model.eval()
+        self.config = EmbeddingsConfig() # self.config is an instance of a configuration class called EmbeddingsConfig.
+        self.mongo = MongoDBClient() # self.mongo is an instance of a MongoDB client.
+        self.model = model #self.model is set to the model argument passed in.
+        self.device = device  #self.device is set to the device argument passed in.
+        self.embedding_model = self.load_model() #self.embedding_model is set to the result of calling the load_model() method, which loads the saved model and removes its last layer to create an embedding model.
+        self.embedding_model.eval() #self.embedding_model.eval() sets the model to evaluation mode.
 
-    def load_model(self):
-        model = self.model.to(self.device)
-        model.load_state_dict(torch.load(self.config.MODEL_STORE_PATH, map_location=self.device))
-        return nn.Sequential(*list(model.children())[:-1])
+    def load_model(self): #method loads a saved model from the MODEL_STORE_PATH specified in the configuration file.
+        model = self.model.to(self.device) #maps the loaded model to the device specified in the configuration file
+        model.load_state_dict(torch.load(self.config.MODEL_STORE_PATH, map_location=self.device)) #torch.load() loads the 
+    #saved state dictionary of a model from a file specified by self.config.MODEL_STORE_PATH. The map_location argument is used to specify where the model should be loaded.
+    #load_state_dict() is then called on the model, which applies the loaded state dictionary to the model. 
+        return nn.Sequential(*list(model.children())[:-1]) #returns a new nn.Sequential model consisting of all the layers except the last one.
 
-    def run_step(self, batch_size, image, label, s3_link):
-        records = dict()
+    def run_step(self, batch_size, image, label, s3_link): #method takes a batch of image, label, and s3_link as input.
+        records = dict() #
 
-        images = self.embedding_model(image.to(self.device))
-        images = images.detach().cpu().numpy()
+        images = self.embedding_model(image.to(self.device)) #calls the load_model() method  to generate image embeddings for the input images.
+        images = images.detach().cpu().numpy() #The embeddings are then converted to a numpy array and moved to the CPU using detach().cpu().numpy().
 
-        records['images'] = images.tolist()
-        records['label'] = label.tolist()
-        records['s3_link'] = s3_link
+        records['images'] = images.tolist() #images converted to the list and then stored into the records dictionary.
+        records['label'] = label.tolist() #labels converted to the list and then stored into the records dictionary.
+        records['s3_link'] = s3_link #  s3 link url of images are stored into the records dictionary.
 
-        df = pd.DataFrame(records)
-        records = list(json.loads(df.T.to_json()).values())
-        self.mongo.insert_bulk_record(records)
+        df = pd.DataFrame(records) #records dictionary is then converted to a pandas dataframe using pd.DataFrame(records).
+        records = list(json.loads(df.T.to_json()).values()) #records dictionary is converted to a list of dictionaries
+        #using json.loads(df.T.to_json()).values(), which converts the dataframe rows into a list of dictionaries.
+        self.mongo.insert_bulk_record(records) #list of dictionaries is then inserted into a MongoDB database using self.mongo.insert_bulk_record(records).
 
-        return {"Response": f"Completed Embeddings Generation for {batch_size}."}
+        return {"Response": f"Completed Embeddings Generation for {batch_size}."} #method returns a dictionary indicating that the embeddings generation is complete for the given batch size.
 
 
 if __name__ == "__main__":
-    dp = DataPreprocessing()
-    loaders = dp.run_step()
+    dp = DataPreprocessing() #creates an instance of the DataPreprocessing class
+    loaders = dp.run_step() #  runs its run_step method to obtain data loaders for training, validation, and testing datasets.
 
-    data = ImageFolder(label_map=loaders["valid_data_loader"][1].class_to_idx)
-    dataloader = DataLoader(dataset=data, batch_size=64, shuffle=True)
-    embeds = EmbeddingGenerator(model=NeuralNet(), device="cpu")
+    data = ImageFolder(label_map=loaders["valid_data_loader"][1].class_to_idx) # creates an instance of the 
+    #ImageFolder class and passes the label map from the validation data loader to it.
+    dataloader = DataLoader(dataset=data, batch_size=64, shuffle=True) #  creates an instance of the DataLoader
+    #class and passes the ImageFolder dataset to it along with batch size and shuffle options.
+    embeds = EmbeddingGenerator(model=NeuralNet(), device="cpu") #creates an instance of the EmbeddingGenerator 
+    #class and passes a NeuralNet model and the device ("cpu" in this case) to it.
 
-    for batch, values in tqdm(enumerate(dataloader)):
+    for batch, values in tqdm(enumerate(dataloader)): #iterates over the data loader and for each batch, it extracts
+    # the images, targets, and links, and passes them to the EmbeddingGenerator instance to obtain embeddings
         img, target, link = values
         print(embeds.run_step(batch, img, target, link))
