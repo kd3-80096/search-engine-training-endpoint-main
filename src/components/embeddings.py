@@ -51,32 +51,32 @@ system, stores them in a list of ImageRecord named tuples, and provides the __le
                 image))) #The ImageRecord object is then appended to the image_records list.
 
 
-    def transformations(self):
-        TRANSFORM_IMG = transforms.Compose(
-            [transforms.Resize(self.config.IMAGE_SIZE),
-             transforms.CenterCrop(self.config.IMAGE_SIZE),
-             transforms.ToTensor(),
-             transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    def transformations(self): ## The transformations method defines the image transformations to be applied to each image.
+        TRANSFORM_IMG = transforms.Compose( #the transforms.Compose function from PyTorch to apply a series of transformations in a pipeline.
+            [transforms.Resize(self.config.IMAGE_SIZE), #resizing the image to a fixed size 256
+             transforms.CenterCrop(self.config.IMAGE_SIZE), # center cropping it to the same size
+             transforms.ToTensor(), # converting it to a PyTorch tensor
+             transforms.Normalize(mean=[0.485, 0.456, 0.406], #normalizing it using the specified mean and standard deviation.
                                   std=[0.229, 0.224, 0.225])]
         )
 
-        return TRANSFORM_IMG
+        return TRANSFORM_IMG ## returning the transformed image
 
-    def __len__(self):
+    def __len__(self):  #The __len__ method returns the length of the dataset, which is the number of image records in the dataset.
         return len(self.image_records)
 
-    def __getitem__(self, idx):
-        record = self.image_records[idx]
-        images, targets, links = record.img, record.label, record.s3_link
+    def __getitem__(self, idx): #The __getitem__ method is called when an item is retrieved from the dataset using indexing.
+        record = self.image_records[idx] # 
+        images, targets, links = record.img, record.label, record.s3_link #The image, target (label), and S3 link are retrieved from the record and the image is opened using PIL.Image.open. 
         images = Image.open(images)
 
-        if len(images.getbands()) < 3:
-            images = images.convert('RGB')
-        images = np.array(self.transform(images))
-        targets = torch.from_numpy(np.array(targets))
+        if len(images.getbands()) < 3: # If the image has fewer than three bands, it is converted to RGB. 
+            images = images.convert('RGB') 
+        images = np.array(self.transform(images)) #The image is then transformed using the transformations method, 
+        targets = torch.from_numpy(np.array(targets)) #converted to a PyTorch tensor.
         images = torch.from_numpy(images)
 
-        return images, targets, links
+        return images, targets, links #and returned along with the target and S3 link.
 
 
 class EmbeddingGenerator:
