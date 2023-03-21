@@ -11,7 +11,7 @@ class DatabaseConfig: ## class name is DatabaseConfig
         self.USERNAME: str = os.getenv("ATLAS_CLUSTER_USERNAME") #os.environ["DATABASE_USERNAME"] assigns the value of 
         #the environment variable DATABASE_USERNAME to the USERNAME attribute of the instance.
         self.PASSWORD: str = os.getenv("DATABASE_PASSWORD")
-        self.URL: str = os.getenv("ATLAS_CLUSTER_PASSWORD") #os.getenv("MONGODB_URL_KEY") assigns the value of the 
+        self.URL: str = os.getenv("MONGODB_URL_KEY") #os.getenv("MONGODB_URL_KEY") assigns the value of the 
         # environment variable MONGODB_URL_KEY to the URL attribute of the instance.
         self.DBNAME: str = "ReverseImageSearchEngine" # assigns the string "ReverseImageSearchEngine" to the DBNAME attribute of the instance.
         self.COLLECTION: str = "Embeddings" #  assigns the string "Embeddings" to the COLLECTION attribute of the instance.

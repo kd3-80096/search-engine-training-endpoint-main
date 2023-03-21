@@ -1,46 +1,52 @@
-from src.entity.config_entity import DatabaseConfig
-from pymongo import MongoClient
-from typing import List, Dict, Any
-from dotenv import load_dotenv
+from src.entity.config_entity import DatabaseConfig ## importing the DatabaseConfig class 
+from pymongo import MongoClient  ## A client-side representation of a MongoDB cluster.
+from typing import List, Dict, Any # typing module that allow us to specify the expected types for variables or function arguments.
+from dotenv import load_dotenv #oad_dotenv is a function from the dotenv module that loads variables from a .env file into the environment variables of the system
 
 
-class MongoDBClient(object):
-    def __init__(self):
-        self.config = DatabaseConfig()
-        url = self.config.URL.replace("<username>", self.config.USERNAME).replace("<password>", self.config.PASSWORD)
-        self.client = MongoClient(url)
+class MongoDBClient(object):  #class MongoDBClient that creates a connection to a MongoDB database
+    def __init__(self): 
+        self.config = DatabaseConfig() #class reads the database configuration from the config_entity module 
+        url = self.config.URL.replace("<username>", self.config.USERNAME).replace("<password>", self.config.PASSWORD) #constructs a MongoDB connection URL with the username and password. 
+        self.client = MongoClient(url) #  it creates a MongoClient instance with the URL and assigns it to the client attribute of the class.
 
-    def insert_bulk_record(self, documents: List[Dict[str, Any]]):
+    def insert_bulk_record(self, documents: List[Dict[str, Any]]): 
+        """The insert_bulk_record method takes a list of documents in the form of a list of dictionaries, where each
+        dictionary represents a document to be inserted into the database."""
         try:
-            db = self.client[self.config.DBNAME]
-            collection = self.config.COLLECTION
-            if collection not in db.list_collection_names():
-                db.create_collection(collection)
-            result = db[collection].insert_many(documents)
-            return {"Response": "Success", "Inserted Documents": len(result.inserted_ids)}
+            db = self.client[self.config.DBNAME]  ## CREATING INTANCE OF DATABASE NAME which is ReverseImageSearchEngine.
+            collection = self.config.COLLECTION ## collection instance is created of the collection name of the mongodb i.e Embeddings.
+            if collection not in db.list_collection_names(): #The method first checks if the specified collection exists in the database, and if not, creates it.
+                db.create_collection(collection) 
+            result = db[collection].insert_many(documents) #Then, it inserts the documents into the collection using the insert_many method of the collection object.
+            return {"Response": "Success", "Inserted Documents": len(result.inserted_ids)} #The method returns a dictionary containing the response status and the number of documents inserted.
         except Exception as e:
             raise e
 
     def get_collection_documents(self):
+        """The get_collection_documents method is defined to retrieve all the documents in a collection from the MongoDB database."""
         try:
-            db = self.client[self.config.DBNAME]
-            collection = self.config.COLLECTION
-            result = db[collection].find()
-            return {"Response": "Success", "Info": result}
+            db = self.client[self.config.DBNAME] ## CREATING INTANCE OF DATABASE NAME which is ReverseImageSearchEngine.
+            collection = self.config.COLLECTION ## collection instance is created of the collection name of the mongodb i.e Embeddings.
+            result = db[collection].find() # It uses the find() method to query the collection 
+            return {"Response": "Success", "Info": result} #returns a dictionary with a "Response" key indicating the success of the operation and an "Info" key containing the query result.
         except Exception as e:
             raise e
 
-    def drop_collection(self):
+    def drop_collection(self): #The drop_collection method is defined to drop a collection from the MongoDB database.
         try:
-            db = self.client[self.config.DBNAME]
-            collection = self.config.COLLECTION
-            db[collection].drop()
-            return {"Response": "Success"}
+            db = self.client[self.config.DBNAME]## CREATING INTANCE OF DATABASE NAME which is ReverseImageSearchEngine.
+            collection = self.config.COLLECTION ## collection instance is created of the collection name of the mongodb i.e Embeddings.
+            db[collection].drop() #It uses the drop() method to remove the collection and 
+            return {"Response": "Success"} #returns a dictionary with a "Response" key indicating the success of the operation.
         except Exception as e:
             raise e
 
 
 if __name__ == "__main__":
+    """creates a list of 4 dictionaries, each containing an "embedding" key with a list of 6 values, a "label" key
+     with a value of 1, and a "link" key with a value of "https://test.com/". This data likely represents some 
+     embeddings generated by a machine learning model along with their corresponding labels and image URLs."""
     data = [
         {"embedding": [1, 2, 3, 4, 5, 6], "label": 1, "link": "https://test.com/"},
         {"embedding": [1, 2, 3, 4, 5, 6], "label": 1, "link": "https://test.com/"},
@@ -48,8 +54,8 @@ if __name__ == "__main__":
         {"embedding": [1, 2, 3, 4, 5, 6], "label": 1, "link": "https://test.com/"}
     ]
 
-    mongo = MongoDBClient()
-    print(mongo.insert_bulk_record(data))
+    mongo = MongoDBClient() #initializes a MongoDBClient object. 
+    print(mongo.insert_bulk_record(data)) # calls the insert_bulk_record method on the test data to insert them into the database and prints the result.
     
     # print(mongo.drop_collection())
     # result = mongo.get_collection_documents()

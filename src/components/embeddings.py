@@ -86,8 +86,8 @@ class EmbeddingGenerator:
     def __init__(self, model, device): #initialization method that takes two arguments, model and device.
         self.config = EmbeddingsConfig() # 
         self.mongo = MongoDBClient() # 
-        self.model = model
-        self.device = device
+        self.model = model 
+        self.device = device 
         self.embedding_model = self.load_model()
         self.embedding_model.eval()
 
