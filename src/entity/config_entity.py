@@ -89,12 +89,13 @@ class ImageFolderConfig: ## class name is ImageFolderConfig
         return self.__dict__ #method returns a dictionary containing all the attributes of the ImageFolderConfig instance
 
 
-class EmbeddingsConfig:
+class EmbeddingsConfig: #EmbeddingsConfig class has the path of the Model stored in directory
     def __init__(self):
-        self.MODEL_STORE_PATH = os.path.join(from_root(), "model", "finetuned", "model.pth")
+        self.MODEL_STORE_PATH = os.path.join(from_root(), "model", "finetuned", "model.pth") # used to join the 
+#root directory of the project (returned by the from_root() function) with the directory "model/finetuned" and the file "model.pth". 
 
     def get_embeddings_config(self):
-        return self.__dict__
+        return self.__dict__ ## method returns a dictionary containing all attributes of the EmbeddingsConfig instance.
 
 
 class AnnoyConfig:

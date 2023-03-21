@@ -83,9 +83,9 @@ class EmbeddingGenerator:
     """ This class loads a pre-trained neural network model from a saved file, removes the last layer, and applies
     the model to the images in the ImageFolder dataset to generate embeddings. The embeddings are then saved to a 
     MongoDB database along with their labels and S3 links."""
-    def __init__(self, model, device):
-        self.config = EmbeddingsConfig()
-        self.mongo = MongoDBClient()
+    def __init__(self, model, device): #initialization method that takes two arguments, model and device.
+        self.config = EmbeddingsConfig() # 
+        self.mongo = MongoDBClient() # 
         self.model = model
         self.device = device
         self.embedding_model = self.load_model()
