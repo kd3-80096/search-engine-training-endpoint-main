@@ -58,24 +58,27 @@ class Pipeline: ## defining the class as Pipeline which will have methods run va
         trainer.save_model_in_pth() ## calling the save_model_in_pth method to save the model in the given path.
 
     def generate_embeddings(self, loaders, net):
-        data = ImageFolder(label_map=loaders["valid_data_loader"][1].class_to_idx)
-        dataloader = DataLoader(dataset=data, batch_size=64, shuffle=True)
-        embeds = EmbeddingGenerator(model=net, device=self.device)
+        """method in the Pipeline class generates embeddings for the images in the validation set using the trained neural network."""
+        data = ImageFolder(label_map=loaders["valid_data_loader"][1].class_to_idx) # an ImageFolder object data is created with the label mapping of the validation data loader. 
+        dataloader = DataLoader(dataset=data, batch_size=64, shuffle=True) #a DataLoader is created with the ImageFolder dataset, with a batch size of 64 and shuffle set to True.
+        embeds = EmbeddingGenerator(model=net, device=self.device) # An instance of the EmbeddingGenerator class is 
+    #created with the trained neural network and the device (GPU or CPU) on which the embeddings will be generated.
 
-        for batch, values in tqdm(enumerate(dataloader)):
-            img, target, link = values
-            print(embeds.run_step(batch, img, target, link))
+        for batch, values in tqdm(enumerate(dataloader)):#a loop is run over the DataLoader, and for each batch of 
+            img, target, link = values #images, targets, and links, the run_step method of the EmbeddingGenerator
+            print(embeds.run_step(batch, img, target, link)) # object is called with the batch of images as input, 
+            #which returns the embeddings for that batch.
 
     @staticmethod
     def create_annoy():
-        ann = Annoy()
-        ann.run_step()
+        ann = Annoy() ## instance of annoy class is created
+        ann.run_step() ##  running the run_step method through the object of the annoy class 
 
     @staticmethod
-    def push_artifacts():
-        connection = S3Connector()
-        response = connection.zip_files()
-        return response
+    def push_artifacts(): ## 
+        connection = S3Connector() #instance of the S3Connector class is created
+        response = connection.zip_files() ##the zip_files method is then run with the instance
+        return response #and the response  instance is returned
 
     def run_pipeline(self):
         self.initiate_data_ingestion()

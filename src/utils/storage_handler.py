@@ -1,12 +1,12 @@
-from src.entity.config_entity import s3Config
-import tarfile
-from boto3 import Session
-import os
+from src.entity.config_entity import s3Config ## importing the s3Config class from config_entity
+import tarfile ## imports the tarfile module for working with tar archives
+from boto3 import Session #the Session class from the boto3 module for interacting with Amazon Web Services (AWS) services.
+import os # os module for working with the operating system.
 
 
-class S3Connector(object):
+class S3Connector(object): ## class named S3Connector
     def __init__(self):
-        self.config = s3Config()
+        self.config = s3Config() ##creating instance of the s3Config class
         self.session = Session(aws_access_key_id=self.config.ACCESS_KEY_ID,
                                aws_secret_access_key=self.config.SECRET_KEY,
                                region_name=self.config.REGION_NAME)
