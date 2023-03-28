@@ -28,8 +28,10 @@ class NeuralNet(nn.Module): ## defines a class called NeuralNet which inherits f
             self.config.BASEMODEL,  ## algorithm used is resnet-18
             pretrained=self.config.PRETRAINED # pretraining is set to true
         )
-        return nn.Sequential(*list(model.children())[:-2]) ##The method returns a new PyTorch sequential model 
-#which is created by removing the last two layers of the pre-trained model (which are assumed to be the classification layers).
+        return nn.Sequential(*list(model.children())[:-2]) """expression returns all but the last two layers of the pre-trained model. The last two layers of the model
+        are typically a fully connected layer and a softmax activation layer, which are used for classification tasks.
+        By removing these layers, the modified model can be used as a feature extractor that maps an input image to a 
+        fixed-length feature vector. This feature vector can be used for task image similarity search. The modified model is returned by the get_model() method."""
 
     def forward(self, x):
         """The forward method defines the forward pass of the neural network, which takes an input tensor x and applies the
